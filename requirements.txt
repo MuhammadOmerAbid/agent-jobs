@@ -1,0 +1,5 @@
+﻿# Dependencies
+anthropix
+python-dotenv
+python-telegram-bot
+apscheduler
