@@ -1,6 +1,9 @@
-# Agent 3 — Remote Job Hunter
+﻿# Agent 3 â€” Remote Job Hunter
 
-Finds remote jobs that match your profile, scores them with AI, and drafts tailored cover notes. You review and apply manually — no auto-apply ever.
+![CI](https://github.com/MuhammadOmerAbid/agent-jobs/actions/workflows/ci.yml/badge.svg) ![License](https://img.shields.io/github/license/MuhammadOmerAbid/agent-jobs) ![Python](https://img.shields.io/badge/python-3.11+-blue)
+
+
+Finds remote jobs that match your profile, scores them with AI, and drafts tailored cover notes. You review and apply manually â€” no auto-apply ever.
 
 **Part of:** [AI Outreach System](../ai-outreach-system/)
 
@@ -45,7 +48,7 @@ cp .env.example .env
 ## Usage
 
 ```bash
-# Set up your profile (run once — parses your CV)
+# Set up your profile (run once â€” parses your CV)
 python agent_jobs/main.py setup --cv path/to/your-cv.pdf
 
 # Run job search manually
@@ -92,16 +95,16 @@ TELEGRAM_CHAT_ID=        # Your personal Telegram chat ID
 ## Daily Digest Format (Telegram)
 
 ```
-🔍 Daily Job Digest — 3 June 2026
+ðŸ” Daily Job Digest â€” 3 June 2026
 
 1. Senior Frontend Dev @ Acme Inc
-   Fit: 87% ✅
-   Pros: Next.js stack, UTC±3, $5k–$7k
+   Fit: 87% âœ…
+   Pros: Next.js stack, UTCÂ±3, $5kâ€“$7k
    Red flags: None
    [Get Cover Note] [Skip]
 
 2. Full Stack Engineer @ Beta Corp
-   Fit: 72% ⚠️
+   Fit: 72% âš ï¸
    Pros: Remote, React
    Red flags: Requires US timezone overlap
    [Get Cover Note] [Skip]
@@ -121,15 +124,15 @@ Configurable in `agent_jobs/config/schedule.py`.
 SQLite file: `data/jobs.db`
 
 Tables:
-- `jobs` — all fetched job postings
-- `scored` — AI-scored jobs with fit %
-- `selected` — jobs you picked for cover note generation
-- `applied` — your application history
+- `jobs` â€” all fetched job postings
+- `scored` â€” AI-scored jobs with fit %
+- `selected` â€” jobs you picked for cover note generation
+- `applied` â€” your application history
 
 ---
 
 ## Safety
 
-- No auto-apply — against most job sites' terms and produces low quality
-- Official APIs and RSS only — no scraping
+- No auto-apply â€” against most job sites' terms and produces low quality
+- Official APIs and RSS only â€” no scraping
 - You control every application
