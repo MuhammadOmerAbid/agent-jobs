@@ -1,10 +1,19 @@
-﻿install:
-	python -m venv venv
-	venv\Scripts\pip install -r requirements.txt
+.PHONY: install run schedule cover test lint
+
+install:
+	pip install -r requirements.txt
 
 run:
-	python main.py
+	python agent_jobs/main.py run
+
+schedule:
+	python agent_jobs/main.py schedule
+
+cover:
+	python agent_jobs/main.py cover --job-id $(ID)
+
+test:
+	pytest tests/ -v
 
 lint:
-	flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-
+	python -m py_compile agent_jobs/main.py agent_jobs/db.py agent_jobs/fetcher.py agent_jobs/scorer.py agent_jobs/cover.py
