@@ -12,7 +12,7 @@ Finds remote jobs that match your profile, scores them with AI, and drafts tailo
 ## What It Does
 
 1. You provide your CV/profile once (PDF or text) and set your preferences (roles, tech stack, salary range, timezone)
-2. On a schedule, it pulls new postings from RemoteOK, WeWorkRemotely, and Wellfound
+2. On a schedule, it pulls new postings from RemoteOK, WeWorkRemotely, Wellfound, and the other sources listed below
 3. Claude scores each job: fit %, reasons it fits, any red flags
 4. Top matches are sent to you as a daily Telegram digest
 5. For jobs you pick, Claude drafts a short tailored cover note + suggested CV bullet tweaks
@@ -24,13 +24,39 @@ Finds remote jobs that match your profile, scores them with AI, and drafts tailo
 
 ## Job Sources
 
-| Source | Method |
-|--------|--------|
-| RemoteOK | Official API |
-| WeWorkRemotely | RSS Feed |
-| Wellfound (AngelList) | Official listings |
+| Source | Method | Auth Needed |
+|--------|--------|-------------|
+| RemoteOK | Official API | None |
+| WeWorkRemotely | RSS Feed | None |
+| Wellfound (AngelList) | Official listings | None |
+| Remotive | Official API | None (rate-limited, max 4 pulls/day) |
+| Arbeitnow | Official API | None |
+| Himalayas | Official API | None |
+| Jobicy | Official API/RSS | None |
+| Adzuna | Official API | Free `app_id` + `app_key` (register at [developer.adzuna.com](https://developer.adzuna.com), 1,000 calls/month) |
+| Hacker News "Who is Hiring" | Official Firebase API | None |
+| NoDesk | RSS Feed | None |
+| The Muse | Official API | None (500 req/hr) — free `api_key` bumps to 3,600 req/hr |
+| Findwork.dev | Official API | Free token (register at [findwork.dev](https://findwork.dev)), 60 req/min |
+| Jooble | Official API | Free key (instant signup form at [jooble.org/api/about](https://jooble.org/api/about)) |
 
-No scraping. Official APIs and public RSS only.
+No scraping. Official APIs and public RSS only. All sources above are free — no paid API plans are used.
+
+### Note on Adzuna
+
+Unlike most other sources, Adzuna has no dedicated "remote jobs" feed — its `/v1/api/jobs/{country}/search` endpoint is per-country. To get useful coverage, the agent queries it across all 19 supported countries and keeps only listings that look remote-friendly (keyword match on "remote"/"work from home" in the title or description):
+
+`us, gb, ca, au, de, fr, in, nl, es, it, pl, br, mx, sg, za, nz, at, be, ch`
+
+This costs one API call per country per run (19 calls), so budget accordingly against the 1,000 calls/month free tier — roughly one full run every ~1.5 days at daily-schedule granularity, or run it less frequently than the other sources (e.g. weekly) if using the daily digest schedule for everything else.
+
+### Note on Hacker News "Who is Hiring"
+
+This isn't a continuous feed — a new thread is posted by the `@whoishiring` account on the first business day of each month. The agent should fetch the latest thread ID (searchable via the Algolia HN Search API, `https://hn.algolia.com/api/v1/search_by_date?tags=story,author_whoishiring`), then pull its top-level comments via the official Firebase API (`https://hacker-news.firebaseio.com/v0/item/{id}.json`). Each top-level comment is one job post — parse company/stack/remote-or-not from free text since there's no structured schema. Cache the thread ID and only re-fetch new comments on subsequent runs within the same month.
+
+### Note on The Muse and Jooble
+
+Neither is remote-first — The Muse lists jobs across all work arrangements, and Jooble aggregates general listings from across the web. Both need the same remote/work-from-home keyword filtering approach used for Adzuna to stay useful for this agent's purpose.
 
 ---
 
@@ -88,7 +114,14 @@ After running `setup`, edit `agent_jobs/config/profile.json`:
 ANTHROPIC_API_KEY=       # https://console.anthropic.com
 TELEGRAM_BOT_TOKEN=      # Create bot via @BotFather on Telegram
 TELEGRAM_CHAT_ID=        # Your personal Telegram chat ID
+ADZUNA_APP_ID=           # Free — register at https://developer.adzuna.com
+ADZUNA_APP_KEY=          # Free — same registration as above
+FINDWORK_API_TOKEN=      # Free — register at https://findwork.dev
+JOOBLE_API_KEY=          # Free — instant signup at https://jooble.org/api/about
+THEMUSE_API_KEY=         # Optional, free — only needed to raise the 500 req/hr cap to 3,600
 ```
+
+Only Adzuna, Findwork.dev, and Jooble require credentials (all free). RemoteOK, WeWorkRemotely, Wellfound, Remotive, Arbeitnow, Himalayas, Jobicy, Hacker News, and NoDesk all work with zero signup. The Muse works without a key too — `THEMUSE_API_KEY` is optional.
 
 ---
 
