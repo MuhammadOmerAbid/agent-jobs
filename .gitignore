@@ -14,6 +14,8 @@ build/
 # Data
 *.db
 *.sqlite
+data/
+agent_jobs/config/profile.json
 
 # Logs
 logs/

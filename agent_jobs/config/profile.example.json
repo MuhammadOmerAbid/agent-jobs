@@ -1,0 +1,10 @@
+{
+  "roles": ["Full Stack Developer", "Frontend Developer", "Web Developer"],
+  "tech_stack": ["React", "Next.js", "Node.js", "Python", "Django", "Tailwind CSS"],
+  "salary_min_usd": 3000,
+  "salary_max_usd": 8000,
+  "timezone": "UTC+5",
+  "preferred_company_size": "startup",
+  "remote_preference": "fully_remote",
+  "no_go": ["PHP only", "no equity", "non-technical founder only"]
+}
